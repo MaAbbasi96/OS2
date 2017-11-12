@@ -1,6 +1,6 @@
 #include "functions.h"
 
-void read_directory(const std::string& dirName, std::vector<std::string>& directories){
+void functions::read_directory(const std::string& dirName, std::vector<std::string>& directories){
     DIR* dirPointer = opendir(dirName.c_str());
     struct dirent* dp;
     while((dp = readdir(dirPointer)) != NULL)
@@ -9,14 +9,14 @@ void read_directory(const std::string& dirName, std::vector<std::string>& direct
     closedir(dirPointer);
 }
 
-int is_regular_file(const char* path)
+int functions::is_regular_file(const char* path)
 {
     struct stat path_stat;
     stat(path, &path_stat);
     return S_ISREG(path_stat.st_mode);
 }
 
-void print_vector(const std::vector<std::string>& vec){
+void functions::print_vector(const std::vector<std::string>& vec){
     for(int i = 0; i < vec.size(); i++)
         std::cout << vec[i] << std::endl;
 }

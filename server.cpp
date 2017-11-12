@@ -1,30 +1,33 @@
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>
+#include <fstream>
 #include "functions.h"
 
 using namespace std;
 
+void calculate_fine(int tag, int& totalFine,const string& dirName){
+    vector<string> directory;
+    functions::read_directory(dirName, directory);
+    int pfds[directory.size()][2];
+    for(int i = 0; i < directory.size(); i++){
+        if(!fork()){
+            //child process
+        }
+        else{
+            //parent process
+        }
+    }
+}
+
 int main(){
-    // int pfds[2];
-    // char buf[30];
-    //
-    // if (pipe(pfds) == -1) {
-    //     perror("pipe");
-    //     exit(1);
-    // }
-    //
-    // cout << "writing to file descriptor #" << pfds[1] << endl;
-    // write(pfds[1], "test", 5);
-    // cout << "reading from file descriptor #" << pfds[0] << endl;
-    // read(pfds[0], buf, 5);
-    // cout << "read \t" << buf << endl;
-
-    vector<string> directories;
-    read_directory(".", directories);
-    print_vector(directories);
-
+    int totalFine = 0;
+    string startingDir = "./dir";
+    calculate_fine(12345, totalFine, startingDir);
+    cout << totalFine << endl;
     return 0;
 }
