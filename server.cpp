@@ -35,8 +35,17 @@ string pipe_read(int fd){
     return string(buf);
 }
 
-int sum_of_fine_in_file(string fileName){ //TODO: reading from file 
-    return 10;
+int sum_of_fine_in_file(int tag, string fileName){
+    int totalFine = 0, temp_tag, fine;
+    string garbage;
+    fstream file;
+    file.open(fileName.c_str());
+    while(file >> temp_tag >> garbage >> fine)
+        if(tag == temp_tag)
+            totalFine += fine;
+    file.close();
+    cout << fileName << ":" << totalFine << endl;
+    return totalFine;
 }
 
 void calculate_fine(int tag, int parent_write_fd, string dirName){
@@ -52,7 +61,7 @@ void calculate_fine(int tag, int parent_write_fd, string dirName){
         current_address = dirName + '/' + directory[i];
         if(!fork()){
             if(functions::is_regular_file(current_address.c_str()) == 1)
-                pipe_write(pfds[i][WRITE_FD], int_to_str(sum_of_fine_in_file(current_address)));
+                pipe_write(pfds[i][WRITE_FD], int_to_str(sum_of_fine_in_file(tag, current_address)));
             else
                 calculate_fine(tag, pfds[i][WRITE_FD], current_address);
             exit(0);
