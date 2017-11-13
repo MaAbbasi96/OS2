@@ -111,6 +111,34 @@ int main(){
     FD_ZERO(&master);    // clear the master and temp sets
     FD_ZERO(&read_fds);
 
+    // create fifo
+    mkfifo("./namedpipe", 0666);
+
+    // create socket pair
+    int sv[2];
+    if (socketpair(AF_LOCAL, SOCK_STREAM, 0, sv) < 0) {
+       perror("socketpair");
+       exit(1);
+   }
+
+    // create request handler
+    int pipefd_read;
+    if(!fork()){
+        char buf[BUFSIZE];
+        int clientfd;
+        close(sv[0]);
+        while(1){
+            pipefd_read = open("./namedpipe", O_RDONLY);
+            string result = functions::pipe_read(pipefd_read);
+            if(result == "quit")
+                exit(0);
+            int size = functions::sock_fd_read(sv[1], buf, BUFSIZE, &clientfd);
+            send(clientfd, result.c_str(), result.length(), 0);
+        }
+    }
+
+    close(sv[1]);
+
     // get us a socket and bind it
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
@@ -151,6 +179,7 @@ int main(){
 
     // add the listener to the master set
     FD_SET(listener, &master);
+    FD_SET(0, &master);
 
     // keep track of the biggest file descriptor
     fdmax = listener; // so far, it's this one
@@ -159,7 +188,6 @@ int main(){
     for(;;) {
         read_fds = master; // copy it
         if (select(fdmax+1, &read_fds, NULL, NULL, NULL) == -1) {
-
             exit(4);
         }
 
@@ -184,6 +212,16 @@ int main(){
                     }
                 } else {
                     // handle data from a client
+                    int pipefd = open("./namedpipe", O_WRONLY);
+                    if(i == 0){
+                        string input;
+                        cin >> input;
+                        if(input == "quit"){
+                            functions::pipe_write(pipefd, "quit");
+                            close(pipefd);
+                            exit(0);
+                        }
+                    }
                     if ((nbytes = recv(i, buf, sizeof buf, 0)) <= 0) {
                         // got error or connection closed by client
                         if (nbytes == 0) {
@@ -194,8 +232,9 @@ int main(){
                         FD_CLR(i, &master); // remove from master set
                     } else {
                         string startingDir = "./dir";
-                        calculate_fine(12345, STDOUT_FILENO, startingDir);
-                        send(i, "done", 5, 0);
+                        calculate_fine(12345, pipefd, startingDir);
+                        char garbage[2] = {'1', '\0'};
+                        int size = functions::sock_fd_write(sv[0], garbage, 1, i);
                     }
                 } // END handle data from client
             } // END got new incoming connection
