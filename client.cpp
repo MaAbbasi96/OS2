@@ -75,7 +75,7 @@ int main()
 
     inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
             s, sizeof s);
-    cout << "client: connecting to " << s << endl;
+    cout << "Connecting to " << s << endl;
 
     freeaddrinfo(servinfo); // all done with this structure
 
@@ -88,7 +88,7 @@ int main()
         exit(1);
     buf[numbytes] = '\0';
 
-    cout << "Tour total driving fine is:  " << buf << "$\n";
+    cout << "You have to pay " << buf << " tomans to the bloody government :|\n";
     close(sockfd);
 
     return 0;

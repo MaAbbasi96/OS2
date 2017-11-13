@@ -1,5 +1,7 @@
 #include "functions.h"
 
+#define PIPE_NAME "./namedpipe"
+
 using namespace std;
 
 // get sockaddr, IPv4 or IPv6:
@@ -87,7 +89,7 @@ void calculate_fine(int tag, int parent_write_fd, string dirName){
 
 int main(int argc, char* argv[]){
     if(argc != 2){
-        cerr << "enter directory to begin\n";
+        cerr << "Where are the files? :|\n";
         exit(1);
     }
 
@@ -116,7 +118,7 @@ int main(int argc, char* argv[]){
     FD_ZERO(&read_fds);
 
     // create fifo
-    mkfifo("./namedpipe", 0666);
+    mkfifo(PIPE_NAME, 0666);
 
     // create socket pair
     int sv[2];
@@ -132,7 +134,7 @@ int main(int argc, char* argv[]){
         int clientfd;
         close(sv[0]);
         while(1){
-            pipefd_read = open("./namedpipe", O_RDONLY);
+            pipefd_read = open(PIPE_NAME, O_RDONLY);
             string result = functions::pipe_read(pipefd_read);
             if(result == "quit")
                 exit(0);
@@ -216,7 +218,7 @@ int main(int argc, char* argv[]){
                     }
                 } else {
                     // handle data from a client
-                    int pipefd = open("./namedpipe", O_WRONLY);
+                    int pipefd = open(PIPE_NAME, O_WRONLY);
                     if(i == 0){
                         string input;
                         cin >> input;
@@ -236,6 +238,7 @@ int main(int argc, char* argv[]){
                         close(i); // bye!
                         FD_CLR(i, &master); // remove from master set
                     } else {
+                        cout << "Request from car tagged \"" << buf << "\"\n";
                         string startingDir = argv[1];
                         calculate_fine(atoi(buf), pipefd, startingDir);
                         char garbage[2] = {'1', '\0'};
