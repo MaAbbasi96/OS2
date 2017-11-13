@@ -20,3 +20,21 @@ void functions::print_vector(const std::vector<std::string>& vec){
     for(int i = 0; i < vec.size(); i++)
         std::cout << vec[i] << std::endl;
 }
+
+std::string functions::int_to_str(int x){
+    std::stringstream res;
+    res << x;
+    return res.str();
+}
+
+void functions::pipe_write(int fd, std::string str){
+    write(fd, str.c_str(), str.length());
+}
+
+std::string functions::pipe_read(int fd){
+    char buf[BUFSIZE];
+    int length;
+    length = read(fd, buf, BUFSIZE);
+    buf[length] = '\0';
+    return std::string(buf);
+}

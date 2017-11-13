@@ -8,32 +8,9 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fstream>
-#include <sstream>
 #include "functions.h"
 
-#define BUFSIZE 2048
-#define WRITE_FD 1
-#define READ_FD 0
-
 using namespace std;
-
-string int_to_str(int x){
-    stringstream res;
-    res << x;
-    return res.str();
-}
-
-void pipe_write(int fd, string str){
-    write(fd, str.c_str(), str.length());
-}
-
-string pipe_read(int fd){
-    char buf[BUFSIZE];
-    int length;
-    length = read(fd, buf, BUFSIZE);
-    buf[length] = '\0';
-    return string(buf);
-}
 
 int sum_of_fine_in_file(int tag, string fileName){
     int totalFine = 0, temp_tag, fine;
@@ -44,7 +21,7 @@ int sum_of_fine_in_file(int tag, string fileName){
         if(tag == temp_tag)
             totalFine += fine;
     file.close();
-    cout << fileName << ":" << totalFine << endl;
+    cout << fileName << ": " << totalFine << endl;
     return totalFine;
 }
 
@@ -61,7 +38,7 @@ void calculate_fine(int tag, int parent_write_fd, string dirName){
         current_address = dirName + '/' + directory[i];
         if(!fork()){
             if(functions::is_regular_file(current_address.c_str()) == 1)
-                pipe_write(pfds[i][WRITE_FD], int_to_str(sum_of_fine_in_file(tag, current_address)));
+                functions::pipe_write(pfds[i][WRITE_FD], functions::int_to_str(sum_of_fine_in_file(tag, current_address)));
             else
                 calculate_fine(tag, pfds[i][WRITE_FD], current_address);
             exit(0);
@@ -70,10 +47,10 @@ void calculate_fine(int tag, int parent_write_fd, string dirName){
 
     //terminating processes
     for(int i = 0; i < directory.size(); i++){
-        totalFine += atoi(pipe_read(pfds[i][READ_FD]).c_str());
+        totalFine += atoi(functions::pipe_read(pfds[i][READ_FD]).c_str());
         wait(NULL);
     }
-    pipe_write(parent_write_fd, int_to_str(totalFine));
+    functions::pipe_write(parent_write_fd, functions::int_to_str(totalFine));
 }
 
 int main(){
