@@ -223,6 +223,7 @@ int main(int argc, char* argv[]){
                         if(input == "quit"){
                             functions::pipe_write(pipefd, "quit");
                             close(pipefd);
+                            wait(NULL);
                             exit(0);
                         }
                     }
