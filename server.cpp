@@ -231,7 +231,7 @@ int main(int argc, char* argv[]){
                         // got error or connection closed by client
                         if (nbytes == 0) {
                             // connection closed
-                            cout << "selectserver: somebody hung up\n";
+                            cout << "selectserver: connection terminated\n";
                         }
                         close(i); // bye!
                         FD_CLR(i, &master); // remove from master set

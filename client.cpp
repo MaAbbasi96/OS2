@@ -80,7 +80,7 @@ int main()
     freeaddrinfo(servinfo); // all done with this structure
 
     string car_tag;
-    cout << "Enter car tag:\n";
+    cout << "Enter car tag: ";
     cin >> car_tag;
 
     send(sockfd, car_tag.c_str(), car_tag.length(), 0);
@@ -88,7 +88,7 @@ int main()
         exit(1);
     buf[numbytes] = '\0';
 
-    cout << "client: received " << buf << endl;
+    cout << "Tour total driving fine is:  " << buf << "$\n";
     close(sockfd);
 
     return 0;
