@@ -38,8 +38,7 @@ std::string functions::pipe_read(int fd){
     return std::string(buf);
 }
 
-ssize_t functions::sock_fd_write(int sock, void *buf, ssize_t buflen, int fd)
-{
+ssize_t functions::sock_fd_write(int sock, void *buf, ssize_t buflen, int fd){
     ssize_t     size;
     struct msghdr   msg;
     struct iovec    iov;
@@ -78,8 +77,7 @@ ssize_t functions::sock_fd_write(int sock, void *buf, ssize_t buflen, int fd)
     return size;
 }
 
-ssize_t functions::sock_fd_read(int sock, void *buf, ssize_t bufsize, int *fd)
-{
+ssize_t functions::sock_fd_read(int sock, void *buf, ssize_t bufsize, int *fd){
     ssize_t     size;
 
     if (fd) {
