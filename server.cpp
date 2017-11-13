@@ -50,7 +50,6 @@ int sum_of_fine_in_file(int tag, string fileName){
         if(tag == temp_tag)
             totalFine += fine;
     file.close();
-    cout << fileName << ": " << totalFine << endl;
     return totalFine;
 }
 
@@ -86,7 +85,12 @@ void calculate_fine(int tag, int parent_write_fd, string dirName){
     }
 }
 
-int main(){
+int main(int argc, char* argv[]){
+    if(argc != 2){
+        cerr << "enter directory to begin\n";
+        exit(1);
+    }
+
     fd_set master;    // master file descriptor list
     fd_set read_fds;  // temp file descriptor list for select()
     int fdmax;        // maximum file descriptor number
@@ -231,7 +235,7 @@ int main(){
                         close(i); // bye!
                         FD_CLR(i, &master); // remove from master set
                     } else {
-                        string startingDir = "./dir";
+                        string startingDir = argv[1];
                         calculate_fine(atoi(buf), pipefd, startingDir);
                         char garbage[2] = {'1', '\0'};
                         int size = functions::sock_fd_write(sv[0], garbage, 1, i);
