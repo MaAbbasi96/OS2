@@ -50,7 +50,7 @@ void calculate_fine(int tag, int parent_write_fd, string dirName){
         totalFine += atoi(functions::pipe_read(pfds[i][READ_FD]).c_str());
         wait(NULL);
     }
-    functions::pipe_write(parent_write_fd, functions::int_to_str(totalFine));
+    functions::pipe_write(parent_write_fd, functions::int_to_str(totalFine)); //TODO close pipes
 }
 
 int main(){
