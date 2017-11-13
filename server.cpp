@@ -232,7 +232,7 @@ int main(){
                         FD_CLR(i, &master); // remove from master set
                     } else {
                         string startingDir = "./dir";
-                        calculate_fine(12345, pipefd, startingDir);
+                        calculate_fine(atoi(buf), pipefd, startingDir);
                         char garbage[2] = {'1', '\0'};
                         int size = functions::sock_fd_write(sv[0], garbage, 1, i);
                     }
