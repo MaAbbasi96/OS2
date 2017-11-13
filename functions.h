@@ -29,6 +29,7 @@
 #define BUFSIZE 2048
 #define WRITE_FD 1
 #define READ_FD 0
+#define PORT "4000"
 
 namespace functions{
     void read_directory(const std::string& dirName, std::vector<std::string>& directories);
